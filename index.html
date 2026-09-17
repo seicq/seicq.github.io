@@ -1,1 +1,77 @@
 <h1> Hi this is my site [placeholder] </h1>
+
+flowchart TD
+
+subgraph group_interfaces["Entry Points"]
+  node_train_cli["Training CLI<br/>Python CLI<br/>[train.py]"]
+  node_evaluate_cli["Evaluation CLI<br/>Python CLI<br/>[evaluate.py]"]
+  node_predict_cli["Prediction CLI<br/>Python CLI<br/>[predict.py]"]
+  node_quickstart["Offline smoke demo<br/>example API<br/>[quickstart.py]"]
+end
+
+subgraph group_core["Learning Core"]
+  node_model["NeuralNetwork<br/>stateful model<br/>[model.py]"]
+  node_activations["Activations<br/>math module<br/>[activations.py]"]
+  node_losses["Losses<br/>math module<br/>[losses.py]"]
+  node_training["Training loop<br/>orchestrator<br/>[training.py]"]
+  node_optimizers["Optimizers<br/>update policies<br/>[optimizers.py]"]
+  node_package_api["Package API<br/>public exports<br/>[__init__.py]"]
+  node_gradient_checks{{"Gradient checks<br/>correctness guard<br/>[test_gradients.py]"}}
+end
+
+subgraph group_data["Data and Reporting"]
+  node_data_loader["Data loader<br/>ingestion adapter<br/>[data_loader.py]"]
+  node_mnist_sources[("MNIST sources<br/>external/local data")]
+  node_metrics["Classification metrics<br/>reporting module<br/>[metrics.py]"]
+  node_visualize["Visualization<br/>plotting module<br/>[visualize.py]"]
+  node_model_artifacts[("Saved models<br/>NPZ artifacts")]
+  node_results["Plot outputs<br/>generated artifacts"]
+end
+
+node_train_cli -->|"loads data"| node_data_loader
+node_train_cli -->|"starts"| node_training
+node_quickstart -->|"uses API"| node_model
+node_package_api -->|"exports"| node_model
+node_data_loader -->|"acquires"| node_mnist_sources
+node_data_loader -->|"normalized arrays"| node_training
+node_training -->|"forward and backward"| node_model
+node_training -->|"applies updates"| node_optimizers
+node_model -->|"hidden layers"| node_activations
+node_model -->|"cross-entropy and L2"| node_losses
+node_training -->|"validation predictions"| node_metrics
+node_training -->|"training history"| node_visualize
+node_train_cli -->|"saves NPZ"| node_model_artifacts
+node_evaluate_cli -->|"loads NPZ"| node_model_artifacts
+node_predict_cli -->|"loads NPZ"| node_model_artifacts
+node_evaluate_cli -->|"evaluates predictions"| node_metrics
+node_evaluate_cli -->|"renders reports"| node_visualize
+node_predict_cli -->|"renders samples"| node_visualize
+node_visualize -->|"writes plots"| node_results
+node_gradient_checks -.->|"checks gradients"| node_model
+node_gradient_checks -.->|"varies L2 loss"| node_losses
+
+click node_train_cli "https://github.com/seicq/neural-network-from-scratch/blob/main/scripts/train.py"
+click node_evaluate_cli "https://github.com/seicq/neural-network-from-scratch/blob/main/scripts/evaluate.py"
+click node_predict_cli "https://github.com/seicq/neural-network-from-scratch/blob/main/scripts/predict.py"
+click node_quickstart "https://github.com/seicq/neural-network-from-scratch/blob/main/examples/quickstart.py"
+click node_model "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/model.py"
+click node_activations "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/activations.py"
+click node_losses "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/losses.py"
+click node_training "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/training.py"
+click node_optimizers "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/optimizers.py"
+click node_package_api "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/__init__.py"
+click node_data_loader "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/data_loader.py"
+click node_metrics "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/metrics.py"
+click node_visualize "https://github.com/seicq/neural-network-from-scratch/blob/main/src/neural_network/visualize.py"
+click node_gradient_checks "https://github.com/seicq/neural-network-from-scratch/blob/main/tests/test_gradients.py"
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_train_cli,node_evaluate_cli,node_predict_cli,node_quickstart toneBlue
+class node_model,node_activations,node_losses,node_training,node_optimizers,node_package_api,node_gradient_checks toneAmber
+class node_data_loader,node_mnist_sources,node_metrics,node_visualize,node_model_artifacts,node_results toneMint
